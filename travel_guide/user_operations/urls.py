@@ -23,6 +23,10 @@ urlpatterns = [
     path('admin-register/', views.SuperuserRegistrationView.as_view(), name='superuser-registration'),
     path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('user-details/', views.UserDetailsView.as_view(), name='user-details'),
+    path('update-user/', views.UpdateUserDetailsView.as_view(), name='update-user-details'),
+    
+   
 
     path('package-crud/', views.PackageCRUDView.as_view()),
     path('package-crud/<int:pk>/', views.PackageCRUDView.as_view(),),

@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import CustomUser,Package,Comments,Blogs
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.exceptions import ObjectDoesNotExist
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
@@ -41,9 +43,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop({'password_confirmation ':'password_confirmation'}, None)
         user = CustomUser.objects.create_user(**validated_data)
-
         return user
 
+class CustomUserupdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['username','image','phone','place','email']
+    
+    def validate_email(self, value):
+        if CustomUser.objects.filter(email__iexact=value).exclude(pk=self.instance.pk).exists():
+            raise serializers.ValidationError("This email address is already in use.")
+        return value
+    
 
 class PackageSerializer(serializers.ModelSerializer):
     class Meta:

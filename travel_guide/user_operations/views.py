@@ -10,6 +10,8 @@ from .models import CustomUser,Package,Comments,Blogs
 from .serializers import *
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.generics import RetrieveAPIView,UpdateAPIView
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -40,6 +42,25 @@ class SuperuserRegistrationView(APIView):
                             status=status.HTTP_201_CREATED)
         return Response({"message": "User registration failed", "errors": serializer.errors},
                         status=status.HTTP_400_BAD_REQUEST)
+
+class UserDetailsView(RetrieveAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+class UpdateUserDetailsView(UpdateAPIView):
+    queryset = CustomUser.objects.all()
+    serializer_class = CustomUserupdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+
 
 
 
@@ -251,3 +272,8 @@ class DeleteBlogView(APIView):
 
         except Blogs.DoesNotExist:
             return Response({'detail': 'Blog not found or you do not have permission to delete it.'}, status=status.HTTP_404_NOT_FOUND)
+        
+        
+        
+        
+    

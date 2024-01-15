@@ -18,16 +18,16 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-from currency_converter import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('convert-currency/', views.CurrencyConversionView.as_view(), name='convert-currency'),
-    path('get-safety-info/', views.SafetyInfoView.as_view(), name='get-safety-info'),
-    path('get-country-codes/',views.Country_codeView.as_view(), name='get-country-codes'),
-    path('get-safety-info/<str:country_code>/', views.SafetyInfoView.as_view(), name='get-safety-info'),
-    path('emergency-services/', views.EmergencyServicesView.as_view(), name='emergency-services'),
+    
     path('',include('user_operations.urls')),
+    path('',include('currency_converter.urls')),
+    path('',include('safety.urls')),
+    path('',include('map.urls')),
+    path('',include('weather.urls')),
 ]
 
 
