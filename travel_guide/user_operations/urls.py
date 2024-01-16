@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 from rest_framework_simplejwt import views as jwt_views
+
 urlpatterns = [
     path('register/',views.UserRegistrationView.as_view(), name='user-registration'),
     path('admin-register/', views.SuperuserRegistrationView.as_view(), name='superuser-registration'),
@@ -26,7 +27,9 @@ urlpatterns = [
     path('user-details/', views.UserDetailsView.as_view(), name='user-details'),
     path('update-user/', views.UpdateUserDetailsView.as_view(), name='update-user-details'),
     
-   
+    path('send-otp/', views.PasswordResetOTPSendView.as_view(), name='update-user-details'),
+    path('otp-validation/', views.OTPValidationView.as_view(), name='otp-validation'),
+    path('change-password/', views.ChangePasswordView.as_view(), name='new-password'),
 
     path('package-crud/', views.PackageCRUDView.as_view()),
     path('package-crud/<int:pk>/', views.PackageCRUDView.as_view(),),
@@ -46,5 +49,7 @@ urlpatterns = [
     path('list-user-blogs/', views.ListUserBlogsView.as_view(), name='list-user-blogs'),
     path('update-blog/<int:pk>/', views.UpdateBlogView.as_view(), name='update-blog'),
     path('delete-blog/<int:pk>/', views.DeleteBlogView.as_view(), name='delete-blog'),
+    
+    
 
 ]

@@ -27,7 +27,7 @@ def get_coordinates(place_name):
         'key': api_key,
     }
 
-    response = requests.get(base_url, params=params)
+    response = requests.get(base_url,params=params)
     data = response.json()
 
     location = data[0]
