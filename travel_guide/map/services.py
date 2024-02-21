@@ -40,7 +40,6 @@ def get_coordinates(place_name):
 def get_emergency_services(lat, lng):
     # your actual API key for https://locationiq.com/
     api_key = 'pk.f89febc4b2a6558c5b59086b284b2605'
-
     base_url = "https://us1.locationiq.com/v1/nearby"
     params = {
         'key': api_key,

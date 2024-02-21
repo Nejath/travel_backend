@@ -1,10 +1,39 @@
 from rest_framework import serializers
-from .models import CustomUser,Package,Comments,Blogs
+from .models import CustomUser,Package,Comments,Blogs,Review
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core.exceptions import ObjectDoesNotExist
 
 
-class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+class UserTokenObtainPairSerializer(TokenObtainPairSerializer):
+    default_error_messages = {
+        'no_active_account': {'Custom message':' No active account found with the given credentials'},
+        'blank_username': 'Custom message: Please fill in all required fields.',
+    }
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        # adding custom claims
+        token['current_user'] = user.username
+        token['is_superuser'] = user.is_superuser
+        print(token)
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        if user.is_superuser==False:
+            data["is_superuser"] = user.is_superuser
+            data["current_user"] = user.username
+    
+            return data
+        else:
+            raise serializers.ValidationError("Only commom users are allowed to log in here.")
+        
+   
+        
+    
+class AdminTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -16,9 +45,13 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
         data = super().validate(attrs)
         user = self.user
-        data["is_superuser"] = user.is_superuser
-        data["username"] = user.username
-        return data
+        if user.is_superuser==True:
+                data["is_superuser"] = user.is_superuser
+                data["username"] = user.username
+                return data
+        else:
+            raise serializers.ValidationError(" Only administrators are allowed to log in here.")
+
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -37,11 +70,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
             pass
 
         if data['password'] != data['password_confirmation']:
-            raise serializers.ValidationError("Passwords do not match.")
+            raise serializers.ValidationError({'password_confirmation':"Passwords do not match."})
         return data
 
     def create(self, validated_data):
-        validated_data.pop({'password_confirmation ':'password_confirmation'}, None)
+        validated_data.pop('password_confirmation', None)
         user = CustomUser.objects.create_user(**validated_data)
         return user
 
@@ -57,6 +90,7 @@ class CustomUserupdateSerializer(serializers.ModelSerializer):
     
 
 class PackageSerializer(serializers.ModelSerializer):
+    #hotel=serializers.ImageField(max_length=None,use_url=True,required=False)
     class Meta:
         model = Package
         exclude = ['admin']
@@ -84,4 +118,14 @@ class BlogSerializer(serializers.ModelSerializer):
 class BloglistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blogs
+        fields = "__all__"
+        
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        exclude = ['user']
+        
+class ReviewlistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
         fields = "__all__"

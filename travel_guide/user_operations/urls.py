@@ -22,8 +22,11 @@ from rest_framework_simplejwt import views as jwt_views
 urlpatterns = [
     path('register/',views.UserRegistrationView.as_view(), name='user-registration'),
     path('admin-register/', views.SuperuserRegistrationView.as_view(), name='superuser-registration'),
-    path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    # path('login/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('user-login/', views.UserloginView.as_view(), name='user-token_obtain_pair'),
+    path('admin-login/', views.AdminloginView.as_view(), name='admin-token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    
     path('user-details/', views.UserDetailsView.as_view(), name='user-details'),
     path('update-user/', views.UpdateUserDetailsView.as_view(), name='update-user-details'),
     
@@ -50,6 +53,9 @@ urlpatterns = [
     path('update-blog/<int:pk>/', views.UpdateBlogView.as_view(), name='update-blog'),
     path('delete-blog/<int:pk>/', views.DeleteBlogView.as_view(), name='delete-blog'),
     
+    path('create-review/', views.CreatReviewView.as_view(),),
+    path('list-reviews/', views.ListReviewView.as_view(),),
+    path('review-detail/<int:pk>/', views.ReviewDetailView.as_view(),),
     
 
 ]

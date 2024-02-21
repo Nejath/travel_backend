@@ -35,6 +35,7 @@ class EmergencyServicesView(APIView):
             return Response({'error': 'Failed to obtain coordinates'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         lat, lng = coordinates
+        
         emergency_services = get_emergency_services(lat, lng)
 
         if not emergency_services:

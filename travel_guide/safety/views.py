@@ -37,6 +37,6 @@ class SafetyInfoView(APIView):
 
         if country_safety_info is not None:
             response_data = {'country_safety_info': country_safety_info}
-            return Response(response_data)
+            return Response(response_data )
         else:
             return Response({'error': 'Unable to fetch safety information'}, status=500)

@@ -33,3 +33,4 @@ class WeatherAPIView(APIView):
                 return Response({'message': 'Weather data not found'}, status=404)
             else:
                 return Response({'message': 'Failed to retrieve weather data'}, status=response.status_code)
+            

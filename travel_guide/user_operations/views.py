@@ -17,8 +17,19 @@ from rest_framework.generics import RetrieveAPIView,UpdateAPIView
 from django.core.mail import send_mail
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
+# class UserloginView(TokenObtainPairView):
+#     serializer_class = MyTokenObtainPairSerializer
+    
+
+class UserloginView(TokenObtainPairView):
+    serializer_class = UserTokenObtainPairSerializer
+    
+    
+
+class AdminloginView(TokenObtainPairView):
+    serializer_class = AdminTokenObtainPairSerializer
+    
+
 
 
 class UserRegistrationView(APIView):
@@ -46,6 +57,7 @@ class SuperuserRegistrationView(APIView):
                             status=status.HTTP_201_CREATED)
         return Response({"message": "User registration failed", "errors": serializer.errors},
                         status=status.HTTP_400_BAD_REQUEST)
+
 
 class UserDetailsView(RetrieveAPIView):
     queryset = CustomUser.objects.all()
@@ -276,10 +288,49 @@ class DeleteBlogView(APIView):
 
         except Blogs.DoesNotExist:
             return Response({'detail': 'Blog not found or you do not have permission to delete it.'}, status=status.HTTP_404_NOT_FOUND)
-        
-        
-        
 
+
+
+
+
+class CreatReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        serializer = ReviewSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.validated_data['user'] = self.request.user
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ListReviewView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        try:
+            reviews = Review.objects.all()
+            serializer = ReviewlistSerializer(reviews, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Blogs.DoesNotExist:
+            return Response({'detail': 'review not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+class ReviewDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, pk):
+        try:
+            review = Review.objects.get(pk=pk)
+            serializer = ReviewSerializer(review)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Blogs.DoesNotExist:
+            return Response({'detail': 'review not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+        
+        
+# 3 views for password reset by sending otp to email     
 
 class PasswordResetOTPSendView(APIView):
     def post(self, request):
@@ -358,7 +409,7 @@ class ChangePasswordView(APIView):
         
             user = CustomUser.objects.get(email=email)
             if user is None:
-                return Response({'detail': 'Invalid user or password'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'detail': 'Invalid email'}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Change the user's password
             user.set_password(new_password)
